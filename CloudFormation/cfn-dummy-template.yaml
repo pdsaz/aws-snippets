@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  Dummy template
+
+##
+# CFN template parameters
+#
+Parameters:
+
+  VPC:
+    Description: The EC2 Instance will be launched in this VPC.
+    Type: AWS::EC2::VPC::Id
+
+Resources:
+
+  ASGSpotFletSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allowed Ports
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: '0.0.0.0/0'
