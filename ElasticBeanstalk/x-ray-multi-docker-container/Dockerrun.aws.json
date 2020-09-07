@@ -1,0 +1,44 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "main-app",
+      "image": "nginx",
+      "essential": true,
+      "memory": 512,
+      "environment": [
+          { "name" : "AWS_REGION", "value" : "us-east-2" },
+          { "name" : "AWS_XRAY_DAEMON_ADDRESS", "value" : "xray-daemon:2000" }
+      ],
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": [
+        "xray-daemon"
+      ],
+      "dependsOn": [
+          {
+              "containerName": "xray-daemon",
+              "condition": "HEALTHY"
+          }
+      ]
+    },
+    {
+      "name": "xray-daemon",
+      "image": "amazon/aws-xray-daemon",
+      "memory": 128,
+      "healthCheck": {
+          "retries": 3,
+          "command": [
+            "CMD-SHELL",
+            "timeout 2 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/2000'"
+          ],
+          "timeout": 5,
+          "interval": 30
+      }
+    }
+  ]
+}
