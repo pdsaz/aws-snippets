@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  Sample template
+
+##
+# CFN template parameters
+#
+Parameters:
+
+  VPC:
+    Description: The EC2 Security Group will be created in this VPC.
+    Type: AWS::EC2::VPC::Id
+
+Resources:
+
+  SampleSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allowed Ports
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: '0.0.0.0/0'
+
+
+  InboundRule:
+      Type: AWS::EC2::SecurityGroupIngress
+      Properties:
+        GroupId: !Ref SampleSG
+        IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        SourceSecurityGroupId: !Ref SampleSG
